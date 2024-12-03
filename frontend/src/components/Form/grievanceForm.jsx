@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
-import { format, set } from "date-fns"
+import { format } from "date-fns"
 import { toast } from "react-toastify"
 import axios from "axios"
+import { getCookie } from "@/firebaseConfig"
 export default function GrievanceForm() {
   const [mobileNo, setMobileNo] = useState("")
   const [showOtp, setShowOtp] = useState(false)
@@ -10,6 +11,8 @@ export default function GrievanceForm() {
   const [pnrNo, setPnrNo] = useState("")
   const [type, setType] = useState("")
   const [subType, setSubType] = useState("")
+  const [isLogin, setIsLogin] = useState(null)
+  
   const [incidentDate, setIncidentDate] = useState(
     new Date("2024-09-24T19:08:00")
   )
@@ -24,35 +27,36 @@ export default function GrievanceForm() {
     Staff: typeOptions,
   }
 
-  useEffect(() => {
-    setSubType("")
-  }, [type])
+  useEffect(() => { 
+    setIsLogin(getCookie("accessToken"))
+  }, [])
 
   async function sendPostRequest(e) {
     e.preventDefault()
-    const formData = new FormData();
-    formData.append("mobileNo", mobileNo);
-    
+    const formData = new FormData()
+    formData.append("mobileNo", mobileNo)
+
     // Journey Details
     const journeyDetails = {
       pnrNo: pnrNo,
       type: type,
       subType: subType,
       incidentDate: format(incidentDate, "yyyy-MM-dd'T'HH:mm"),
-    };
-    formData.append("journeyDetails", JSON.stringify(journeyDetails));
+    }
+    formData.append("journeyDetails", JSON.stringify(journeyDetails))
     // Attachment
     if (file) {
-      formData.append("attachment", file);
+      formData.append("attachment", file)
     }
     // Grievance Description
-    formData.append("grievanceDescription", grievanceDescription);
-    const apiUrl = "https://railmadad-backend-fxtd.onrender.com/api/v1/users/grievanceRegister"
+    formData.append("grievanceDescription", grievanceDescription)
+    const apiUrl =
+      "https://railmadad-backend-fxtd.onrender.com/api/v1/users/grievanceRegister"
     // const apiUrl = "http://localhost:8000/api/v1/users/grievanceRegister"
     toast.info("Sending data...", { autoClose: 2000 })
     try {
       const response = await axios.post(apiUrl, formData)
-      toast.success('Grievance registered successfully', { autoClose: 4000 })
+      toast.success("Grievance registered successfully", { autoClose: 4000 })
       console.log(response.data)
       setMobileNo("")
       setPnrNo("")
@@ -65,7 +69,6 @@ export default function GrievanceForm() {
       toast.error("Error: " + error.message, { autoClose: 2000 })
       console.error("Error:", error.message)
     }
-   
   }
   const handleGetOtp = () => {
     setShowOtp(true)
@@ -91,7 +94,10 @@ export default function GrievanceForm() {
         <form onSubmit={sendPostRequest} className="space-y-6 text-slate-600">
           <div className="flex gap-4 items-end">
             <div className="flex-1">
-              <label htmlFor="mobileNo">Mobile No.</label>
+              <label className="flex" htmlFor="mobileNo">
+                Mobile No. &nbsp;
+                <p className="text-slate-400">(if not logged in ) </p>
+              </label>
               <input
                 id="mobileNo"
                 value={mobileNo}
@@ -272,7 +278,7 @@ export default function GrievanceForm() {
           <div className="flex justify-end gap-4">
             <button
               type="submit"
-              className="bg-[#b5727e] hover:bg-[#a25d6a] text-white p-2 rounded"
+              className={`${isLogin?"bg-[#8b0d32] hover:bg-[#6d0a27]":"bg-[#b5727e] hover:bg-[#a25d6a]"}  text-white p-2 rounded`}
             >
               Submit
             </button>

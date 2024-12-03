@@ -14,45 +14,13 @@ connectDB()
     })
     app.listen(portnumber,()=>{
         console.log(`Server is running at port ${portnumber}`)
+        
     })
+
+    app.get('/', (req, res) => {
+        res.send('Welcome to Rail Madad Dashboard!');
+    });
 })
 .catch((err)=>{
     console.log("MongoDB connection not happend",err)
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// (async()=>{
-//     try {
-//         await mongoose.createConnection(`${process.env.MONGODB_URL}/${DB_NAME}`)
-//         console.log("Connected Succefully!!!!")
-//         app.on("error",()=>{
-//             console.log("express error")
-//         })
-//         app.listen(process.env.PORT,()=>{
-//             console.log(`App is listing on ${process.env.PORT}`)
-//         })
-//     } catch (error) {
-//         console.log("mongodb didn't connect :",error)
-//     }
-// })()

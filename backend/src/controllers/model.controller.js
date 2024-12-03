@@ -4,7 +4,7 @@ import {
     HarmBlockThreshold,
   } from "@google/generative-ai";
   import { GoogleAIFileManager } from "@google/generative-ai/server";
-  import { textextraction } from "../utils/model/text.js";
+  // import { textextraction } from "../utils/model/text.js";
   
   const apiKey = "AIzaSyAlMnfSJArVX8z9iBeNGayWomUxFR3ce1c";
   const genAI = new GoogleGenerativeAI(apiKey);
@@ -153,18 +153,11 @@ const audiototext = async (req, res) => {
     })),
   };
 
-  const message = textextraction(result.response.text());
+  // const message = textextraction(result.response.text());
   // console.log(jsonResponse);
   return jsonResponse;
 };
 
 
-export { audiototext 
-         
-};
-
-
-//   const  lo = "src/controllers/trail.mp3"
-//   audiototext(lo)
-  
+export { audiototext};
 

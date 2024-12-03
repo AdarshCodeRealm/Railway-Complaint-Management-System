@@ -13,8 +13,9 @@ import {
 import { upload } from "../middlewars/multer.middleware.js";
 import { verifyJWT } from "../middlewars/auth.middleware.js";
 import { audiototext } from "../controllers/model.controller.js";
-import { imagetotext } from "../utils/model/image.js";
+// import { imagetotext } from "../utils/model/image.js";
 import { grievanceRegister, testingControl } from "../controllers/register.controller.js";
+import { processGrievances } from "../controllers/processGrievances/process.controller.js";
 const router = Router();
 
 router.route("/register").post(
@@ -43,7 +44,7 @@ router.route("/update-password").post(verifyJWT, changePassword);
 router.route("/forget-password").post(forgetPasword);
 router.route("/sended/:email").post(verifyOTP);
 router.route("/audio").post(upload.single("location"), audiototext);
-router.route("/image").post(upload.single("location"), imagetotext);
 router.route("/grievanceRegister").post(upload.single("attachment"), grievanceRegister);
-router.route("/test").post(testingControl);
+router.route("/test").get(testingControl);
+router.route("/p").get(processGrievances);
 export default router;

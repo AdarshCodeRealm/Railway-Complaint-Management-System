@@ -1,14 +1,7 @@
-import { useState } from "react"
 import RailLogo from "../assets/logo-railmadad.png"
 import {
   Bell,
   User,
-  Menu,
-  Home,
-  FileText,
-  Settings,
-  HelpCircle,
-  UserPlus,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import StaffSection from "../components/Sections/StaffSection"
@@ -19,18 +12,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import GrievanceSection from "@/components/Sections/GrievanceSection"
+} from "@/components/ui/dropdown-menu";
+import { useContext } from "react"
+import GrievanceSection from "@/components/Sections/Grievance Section/GrievanceSection"
 import { signOut } from "../Config"
+import { navContext } from "@/context/navbarContext/navbarContext";
+import NavbarSection from "@/components/NavbarSection";
 function RailMadadDashboardWithSidebar() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-  const [activeSection, setActiveSection] = useState("dashboard")
-  const handleButtonClick = (sectionName) => {
-    setActiveSection(sectionName)
-  }
+  const {state} = useContext(navContext);
 
   const renderActiveComponent = () => {
-    switch (activeSection) {
+    switch (state.activeElement) {
       case "dashboard":
         return <GrievanceSection />
       case "complaints":
@@ -49,90 +41,12 @@ function RailMadadDashboardWithSidebar() {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside
-        className={`bg-indigo-700 text-white min-h-screen p-4 ${isSidebarOpen ? "w-64" : "w-16"}`}
-      >
-        <nav>
-          <ul className="space-y-2">
-            <li>
-              <button
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="flex items-center space-x-2 p-2 hover:bg-indigo-600 rounded"
-              >
-                <Menu className="h-5 w-5" />
-                <span className={`${isSidebarOpen ? "" : "hidden"}`}></span>
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleButtonClick("dashboard")}
-                className={`flex items-center space-x-2 p-2 hover:bg-indigo-600 rounded ${
-                  activeSection === "dashboard" ? "bg-indigo-800" : ""
-                }`}
-              >
-                <Home className="h-5 w-5" />
-                <span className={`${isSidebarOpen ? "" : "hidden"}`}>
-                  Dashboard
-                </span>
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleButtonClick("complaints")}
-                className={`flex items-center space-x-2 p-2 hover:bg-indigo-600 rounded ${
-                  activeSection === "complaints" ? "bg-indigo-800" : ""
-                }`}
-              >
-                <FileText className="h-5 w-5" />
-                <span className={`${isSidebarOpen ? "" : "hidden"}`}>
-                  Complaints
-                </span>
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleButtonClick("staff")}
-                className={`flex items-center space-x-2 p-2 hover:bg-indigo-600 rounded ${
-                  activeSection === "staff" ? "bg-indigo-800" : ""
-                }`}
-              >
-                <UserPlus className="h-5 w-5" />
-                <span className={`${isSidebarOpen ? "" : "hidden"}`}>
-                  Staff
-                </span>
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleButtonClick("settings")}
-                className={`flex items-center space-x-2 p-2 hover:bg-indigo-600 rounded ${
-                  activeSection === "settings" ? "bg-indigo-800" : ""
-                }`}
-              >
-                <Settings className="h-5 w-5" />
-                <span className={`${isSidebarOpen ? "" : "hidden"}`}>
-                  Settings
-                </span>
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleButtonClick("help")}
-                className={`flex items-center space-x-2 p-2 hover:bg-indigo-600 rounded ${
-                  activeSection === "help" ? "bg-indigo-800" : ""
-                }`}
-              >
-                <HelpCircle className="h-5 w-5" />
-                <span className={`${isSidebarOpen ? "" : "hidden"}`}>Help</span>
-              </button>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+
+      <NavbarSection />
 
       {/* Main Content */}
       <div className="flex-1 flex  flex-col  overflow-hidden">
-        <header className="bg-white z-10 shadow-sm">
+        <header className="bg-white  shadow-sm">
           <div className=" max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div className="flex items-center">
               <div className="flex flex-row space-x-4 justify-center items-center ">

@@ -21,7 +21,8 @@ function GrievanceSection() {
       type: "Housekeeping",
       status: "Open",
       date: "2024-09-24",
-      description: "A common grievance regarding Indian train toilets is the lack of cleanliness and proper hygiene maintenance. Passengers often encounter dirty floors, unclean toilets, unpleasant odors, and inadequate cleaning during long journeys.",
+      description:
+        "A common grievance regarding Indian train toilets is the lack of cleanliness and proper hygiene maintenance. Passengers often encounter dirty floors, unclean toilets, unpleasant odors, and inadequate cleaning during long journeys.",
       severity: "Medium",
       assignedStaff: null,
     },
@@ -33,7 +34,8 @@ function GrievanceSection() {
       description: "Unclean compartment",
       severity: "Low",
       assignedStaff: "John Doe",
-    },
+    }
+    ,
     {
       id: 3,
       type: "Staff Behavior",
@@ -42,7 +44,38 @@ function GrievanceSection() {
       description: "Rude staff member",
       severity: "High",
       assignedStaff: "Jane Smith",
-    },
+    }
+    ,
+    {
+      id: 12,
+      type: "Staff Behavior",
+      status: "In Progress",
+      date: "2024-09-23",
+      description: "Rude staff member",
+      severity: "High",
+      assignedStaff: "Jane Smith",
+    }
+    ,
+    {
+      id: 23,
+      type: "Staff Behavior",
+      status: "In Progress",
+      date: "2024-09-23",
+      description: "Rude staff member",
+      severity: "High",
+      assignedStaff: "Jane Smith",
+    }
+    ,
+    {
+      id: 43,
+      type: "Staff Behavior",
+      status: "In Progress",
+      date: "2024-09-23",
+      description: "Rude staff member",
+      severity: "High",
+      assignedStaff: "Jane Smith",
+    }
+    ,
     {
       id: 4,
       type: "Reservation",
@@ -69,7 +102,43 @@ function GrievanceSection() {
       description: "Train delayed by 2 hours",
       severity: "Medium",
       assignedStaff: null,
-    }
+    },
+    {
+      id: 7,
+      type: "Delay",
+      status: "Open",
+      date: "2024-09-25",
+      description: "Train delayed by 2 hours",
+      severity: "Medium",
+      assignedStaff: null,
+    },
+    {
+      id: 8,
+      type: "Delay",
+      status: "Open",
+      date: "2024-09-25",
+      description: "Train delayed by 2 hours",
+      severity: "Medium",
+      assignedStaff: null,
+    },
+    {
+      id: 9,
+      type: "Delay",
+      status: "Open",
+      date: "2024-09-25",
+      description: "Train delayed by 2 hours",
+      severity: "Medium",
+      assignedStaff: null,
+    },
+    {
+      id: 10,
+      type: "Dec iejdjlay",
+      status: "Open",
+      date: "2024-09-25",
+      description: "Train delayed by 2gr hours",
+      severity: "Medium",
+      assignedStaff: null,
+    },
   ]
 
   const filteredComplaints = mockComplaints.filter(
@@ -105,7 +174,7 @@ function GrievanceSection() {
     }
   }
   return (
-    <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+    <main className="flex-1 overflow-x-hidden overflow-y-scroll h-screen  pb-10 bg-gray-100">
       <div className="container mx-auto px-6 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-sm p-6">
@@ -147,7 +216,7 @@ function GrievanceSection() {
         </div>
 
         <div className="bg-white shadow-sm rounded-lg p-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-4 md:space-y-0">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2 space-y-4 md:space-y-0">
             <h2 className="text-2xl font-semibold text-gray-800">
               Recent Complaints
             </h2>
@@ -181,7 +250,14 @@ function GrievanceSection() {
               </select>
             </div>
           </div>
-          <div className="overflow-x-auto">
+
+          <p className="text-sm text-gray-500">
+            Showing{" "}
+            {filteredComplaints.filter((c) => c.status === "Open").length} of{" "}
+            {mockComplaints.length} complaints are open
+          </p>
+          {/* //section 3  */}
+          <div>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -209,7 +285,7 @@ function GrievanceSection() {
                         {complaint.severity}
                       </Badge>
                     </TableCell>
-                    <TableCell >{complaint.date}</TableCell>
+                    <TableCell>{complaint.date}</TableCell>
                     <TableCell>{complaint.description}</TableCell>
                     <TableCell>
                       {complaint.assignedStaff || "Unassigned"}

@@ -8,9 +8,6 @@ import jwt from "jsonwebtoken"
 import { generateOTP } from "../utils/otpgenerator.js"
 import { sendingmail } from "../utils/nodemailer.js"
 
-
-
-
 const generateAccessAndRefreshToken = async(UserId)=>{
     try {
         const user = await User.findById(UserId)

@@ -98,8 +98,7 @@ const grievanceRegister = async (req, res) => {
   }
 };
 const testingControl = async (req, res) => {
-  console.log("testing control");
   return res.status(200).json({ message: "testing control" });
 };
 
-export { grievanceRegister, sendMail ,testingControl};
+export { grievanceRegister, sendMail, testingControl };

@@ -2,11 +2,7 @@
 import { initializeApp } from "firebase/app"
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth"
 
-const provider = new GoogleAuthProvider() // TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const provider = new GoogleAuthProvider() 
 const firebaseConfig = {
   apiKey: "AIzaSyBwtFTWEXgs_vV9C8fbq-ND7f64eno0kgw",
   authDomain: "railmadad-dashboard.firebaseapp.com",
