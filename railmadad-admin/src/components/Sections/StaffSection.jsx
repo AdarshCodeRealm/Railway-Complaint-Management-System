@@ -1,5 +1,5 @@
-import  { useState } from 'react'
-import { Search, ChevronDown, Plus, Upload, MoreVertical } from 'lucide-react'
+import { useEffect, useState } from "react"
+import { Search, ChevronDown,  Upload, MoreVertical } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -18,35 +18,58 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
-// Mock data for employees
-const mockEmployees = [
-  { id: 1, name: 'Ethan Antonio', department: 'Admin', contact: { phone: '+1 404-233-7961', email: 'admin@centrovo.com' }, requests: 1, status: 'active', avatar: '/placeholder.svg?height=40&width=40' },
-  { id: 2, name: 'Louis B. Kimble', department: 'Hardware', contact: { phone: '+1 404-233-7962', email: 'louis@centrovo.com' }, requests: 0, status: 'inactive', avatar: '/placeholder.svg?height=40&width=40' },
-  { id: 3, name: 'Calvin C. Landry', department: 'Software', contact: { phone: '+1 404-233-7963', email: 'calvin@centrovo.com' }, requests: 0, status: 'busy', avatar: '/placeholder.svg?height=40&width=40' },
-  { id: 4, name: 'Mabel L. Lee', department: 'Marketing', contact: { phone: '+1 404-233-7964', email: 'mabel@centrovo.com' }, requests: 3, status: 'active', avatar: '/placeholder.svg?height=40&width=40' },
-]
+import AddStaff from "../AddStaff.jsx"
+import axios from "axios"
 
 function EmployeeManagement() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('All')
-  const [fieldFilter, setFieldFilter] = useState('All')
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("All")
+  const [fieldFilter, setFieldFilter] = useState("All")
+  const [employees, setEmployees] = useState([])
+  const [isWorkingHours, setIsWorkingHours] = useState(false)
 
-  const filteredEmployees = mockEmployees.filter(employee =>
-    (employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     employee.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     employee.contact.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (statusFilter === 'All' || employee.status === statusFilter) &&
-    (fieldFilter === 'All' || employee.department === fieldFilter)
-  )
+  async function getAllEmployees() {
+    try {
+      const response = await axios.get(
+        "http://localhost:8000/api/v1/users/getEmployees"
+      ) // Replace with your actual API endpoint
+      console.log(response.data.employees)
+      setEmployees(response.data.employees)
+    } catch (error) {
+      console.error("Error fetching employees:", error)
+    }
+  }
+  async function deleteEmployee(id) {
+    try {
+      const response = await axios.delete(
+        `http://localhost:8000/api/v1/users/deleteEmployee/${id}`
+      ) // Replace with your actual API endpoint
+      console.log(response.data)
+      getAllEmployees()
+    } catch (error) {
+      console.error("Error deleting employee:", error)
+    }
+  }
+  const isBetweenHours = (startHour, endHour, date) => {
+    const hours = date.getHours()
+    return startHour <= hours && hours < endHour
+  }
+  useEffect(() => {
+    getAllEmployees()
+    const timer = setInterval(() => {
+      const now = new Date()
+      setIsWorkingHours(isBetweenHours(8, 17, now))
+    }, 1000)
 
+    return () => clearInterval(timer)
+  }, [])
   const getStatusBadge = (status) => {
     switch (status) {
-      case 'active':
+      case "active":
         return <Badge className="bg-green-100 text-green-800">Active</Badge>
-      case 'inactive':
+      case "inactive":
         return <Badge className="bg-gray-100 text-gray-800">Inactive</Badge>
-      case 'busy':
+      case "busy":
         return <Badge className="bg-yellow-100 text-yellow-800">Busy</Badge>
       default:
         return null
@@ -56,11 +79,22 @@ function EmployeeManagement() {
   return (
     <div className="bg-white shadow-sm rounded-lg p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800">COMPANY EMPLOYEES</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">
+          COMPANY EMPLOYEES
+        </h2>
         <div className="flex space-x-2">
-          <Button variant="ghost" className="text-indigo-600 hover:text-indigo-800">Employees</Button>
-          <Button variant="ghost" className="text-gray-600 hover:text-gray-800">Live View</Button>
-          <Button variant="ghost" className="text-gray-600 hover:text-gray-800">Org Chart</Button>
+          <Button
+            variant="ghost"
+            className="text-indigo-600 hover:text-indigo-800"
+          >
+            Employees
+          </Button>
+          <Button variant="ghost" className="text-gray-600 hover:text-gray-800">
+            Live View
+          </Button>
+          <Button variant="ghost" className="text-gray-600 hover:text-gray-800">
+            Org Chart
+          </Button>
         </div>
       </div>
       <div className="flex flex-wrap justify-between items-center mb-4 gap-4">
@@ -83,10 +117,18 @@ function EmployeeManagement() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onSelect={() => setStatusFilter('All')}>All</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setStatusFilter('active')}>Active</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setStatusFilter('inactive')}>Inactive</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setStatusFilter('busy')}>Busy</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setStatusFilter("All")}>
+                All
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setStatusFilter("active")}>
+                Active
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setStatusFilter("inactive")}>
+                Inactive
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setStatusFilter("busy")}>
+                Busy
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <DropdownMenu>
@@ -97,19 +139,30 @@ function EmployeeManagement() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onSelect={() => setFieldFilter('All')}>All</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setFieldFilter('Admin')}>Admin</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setFieldFilter('Hardware')}>Hardware</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setFieldFilter('Software')}>Software</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setFieldFilter('Marketing')}>Marketing</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setFieldFilter("All")}>
+                All
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setFieldFilter("Admin")}>
+                Admin
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setFieldFilter("Hardware")}>
+                Hardware
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setFieldFilter("Software")}>
+                Software
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setFieldFilter("Marketing")}>
+                Marketing
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
         <div className="flex space-x-2">
-          <Button className="bg-green-500 hover:bg-green-600 text-white">
+          {/* <Button  onclick={() => setAddEmployeeOpen(!addEmployeeOpen)} className="bg-green-500 hover:bg-green-600 text-white">
             <Plus className="mr-2 h-4 w-4" />
             Add Employees
-          </Button>
+          </Button> */}
+          <AddStaff />
           <Button variant="outline" className="text-gray-600">
             <Upload className="mr-2 h-4 w-4" />
             Import Employees
@@ -121,39 +174,61 @@ function EmployeeManagement() {
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Name</TableHead>
-            <TableHead>Department</TableHead>
             <TableHead>Contact</TableHead>
+            <TableHead>Department</TableHead>
+            <TableHead>Post</TableHead>
             <TableHead>Requests</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredEmployees.map((employee) => (
+          {employees.map((employee) => (
             <TableRow key={employee.id}>
               <TableCell>{employee.id}</TableCell>
               <TableCell>
                 <div className="flex items-center space-x-3">
                   <Avatar>
                     <AvatarImage src={employee.avatar} alt={employee.name} />
-                    <AvatarFallback>{employee.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                    <AvatarFallback>
+                      {employee.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
                   </Avatar>
-                  <span className="font-medium text-indigo-600">{employee.name}</span>
+                  <span className="font-medium text-indigo-600">
+                    {employee.name}
+                  </span>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div>
+                  <div>{employee.contact}</div>
+                  <div className="text-sm text-gray-500">{employee.email}</div>
                 </div>
               </TableCell>
               <TableCell>{employee.department}</TableCell>
+
               <TableCell>
-                <div>
-                  <div>{employee.contact.phone}</div>
-                  <div className="text-sm text-gray-500">{employee.contact.email}</div>
-                </div>
+                <div>{employee.role}</div>
               </TableCell>
               <TableCell>
-                {employee.requests > 0 && (
-                  <Badge className="bg-green-100 text-green-800">{employee.requests}</Badge>
+                {employee.request > 0 ? (
+                  <Badge className="bg-green-100 text-green-800">
+                    {employee.request}
+                  </Badge>
+                ) : (
+                  <Badge className="bg-gray-100 text-gray-800">-</Badge>
                 )}
               </TableCell>
-              <TableCell>{getStatusBadge(employee.status)}</TableCell>
+              <TableCell>{getStatusBadge(employee.shiftTiming)}</TableCell>
+              <TableCell>
+                {(isWorkingHours && employee.shiftTiming == "Morning") ||
+                (!isWorkingHours && employee.shiftTiming == "Night")
+                  ? "active"
+                  : "inactive"}
+              </TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -161,9 +236,9 @@ function EmployeeManagement() {
                       <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent align="end" >
                     <DropdownMenuItem>Edit</DropdownMenuItem>
-                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                    <DropdownMenuItem><button onClick={() => deleteEmployee(employee.id)}>Delete</button></DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

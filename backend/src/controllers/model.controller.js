@@ -1,163 +1,82 @@
-import {
-    GoogleGenerativeAI,
-    HarmCategory,
-    HarmBlockThreshold,
-  } from "@google/generative-ai";
-  import { GoogleAIFileManager } from "@google/generative-ai/server";
-  // import { textextraction } from "../utils/model/text.js";
-  
-  const apiKey = "AIzaSyAlMnfSJArVX8z9iBeNGayWomUxFR3ce1c";
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const fileManager = new GoogleAIFileManager(apiKey);
-  
-  
-  async function uploadToGemini(path, mimeType) {
-    const uploadResult = await fileManager.uploadFile(path, {
-      mimeType,
-      displayName: path,
-    });
-    const file = uploadResult.file;
-    console.log(`Uploaded file ${file.displayName} as: ${file.name}`);
-    return file;
-  }
-  
-  const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
-  });
-  
-  const generationConfig = {
-    temperature: 1,
-    topP: 0.95,
-    topK: 64,
-    maxOutputTokens: 8192,
-    responseMimeType: "text/plain",
-  };
-  
-//   const audiototext = async(req,res)=> {
-//     const location = req.file.path;
-//     console.log(location);
-//     const files = [
-//       await uploadToGemini("src/controllers/trial.mp3", "audio/mp3"),
-//       await uploadToGemini("src/controllers/test.mp3", "audio/mp3"),
-//       await uploadToGemini(location,"audio/mp3")
-//     ];
-  
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+const apiKey = "AIzaSyAlMnfSJArVX8z9iBeNGayWomUxFR3ce1c";
+const genAI = new GoogleGenerativeAI(apiKey);
 
-//     const parts = [
-//       {text: "input: "},
-//       {
-//         fileData: {
-//           mimeType: files[0].mimeType,
-//           fileUri: files[0].uri,
-//         },
-//       },
-//       {text: "output: The washroom is very unclean please clean it up"},
-//       {text: "input: "},
-//       {
-//         fileData: {
-//           mimeType: files[1].mimeType,
-//           fileUri: files[1].uri,
-//         },
-//       },
-//       {text: "output: Hello how are you doing I am fine How are you Hey"},
-//       {text: "input: "},
-//       {
-//         fileData: {
-//           mimeType: files[2].mimeType,
-//           fileUri: files[2].uri,
-//         },
-//       },
-//       {text: "output: "},
-//     ];
-  
-//     const result = await model.generateContent({
-//       contents: [{ role: "user", parts }],
-//       generationConfig,
-//     });
-    
-//     // console.log(result.response.text());
-//     const jsonResponse = {
-//         text : result.response.text(),
-//         files: files.map(file => ({
-//             displayName: file.displayName,
-//             uri: file.uri,
-//             mimeType: file.mimeType,
-//         }))};
-    
-//     console.log(jsonResponse)
-//     return jsonResponse
-    
-
-// }
-
-
-let filesUploaded = false;
-let uploadedFiles = [];
-
-const audiototext = async (req, res) => {
-  const location = req.file.path;
-  console.log(location);
-
-  // Check if the files have been uploaded already
-  if (!filesUploaded) {
-    // Upload the initial files
-    uploadedFiles = [
-      await uploadToGemini("src/controllers/trial.mp3", "audio/mp3"),
-      await uploadToGemini("src/controllers/test.mp3", "audio/mp3"),
-    ];
-    filesUploaded = true; // Set the flag to true after uploading
-  }
-
-  // Upload the new file from the request
-  const newFile = await uploadToGemini(location, "audio/mp3");
-  uploadedFiles.push(newFile); // Add the new file to the uploaded files array
-
-  const parts = [
-    { text: "input: " },
-    {
-      fileData: {
-        mimeType: uploadedFiles[0].mimeType,
-        fileUri: uploadedFiles[0].uri,
-      },
+const schema = {
+  description: "List of incidents",
+  type: SchemaType.OBJECT,
+  properties: {
+    ID: {
+      type: SchemaType.STRING,
+      description: "Unique identifier for the incident",
+      nullable: false,
     },
-    { text: "output: The washroom is very unclean please clean it up" },
-    { text: "input: " },
-    {
-      fileData: {
-        mimeType: uploadedFiles[1].mimeType,
-        fileUri: uploadedFiles[1].uri,
-      },
+    Type: {
+      type: SchemaType.STRING,
+      description: "Category of the incident",
+      nullable: false,
     },
-    { text: "output: Hello how are you doing I am fine How are you Hey" },
-    { text: "input: " },
-    {
-      fileData: {
-        mimeType: newFile.mimeType,
-        fileUri: newFile.uri,
-      },
+    Severity: {
+      type: SchemaType.STRING,
+      description: "Level of urgency for the incident",
+      nullable: false,
     },
-    { text: "output: " },
-  ];
+    Department: {
+      type: SchemaType.STRING,
+      description: "Department responsible for handling the incident, ",
+      nullable: false,
+      enum: [
+        "Train Operations",
+        "Commercial",
+        "Engineering",
+        "RPF",
+        "Passenger Amenities",
+        "IRCTC",
+      ],
+    },
 
-  const result = await model.generateContent({
-    contents: [{ role: "user", parts }],
-    generationConfig,
-  });
-
-  const jsonResponse = {
-    text: result.response.text(),
-    files: uploadedFiles.map(file => ({
-      displayName: file.displayName,
-      uri: file.uri,
-      mimeType: file.mimeType,
-    })),
-  };
-
-  // const message = textextraction(result.response.text());
-  // console.log(jsonResponse);
-  return jsonResponse;
+    Description: {
+      type: SchemaType.STRING,
+      description: "Detailed description of the incident ",
+      nullable: false,
+    },
+  },
+  required: ["ID", "Type", "Severity", "Description", "Department"],
 };
 
+const model = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash",
+  generationConfig: {
+    responseMimeType: "application/json",
+    responseSchema: schema,
+  },
+});
 
-export { audiototext};
+import { Incident } from "../models/systemComplaint.js";
 
+export async function generateAndStoreIncident(req, res) {
+  try {
+    const result = await model.generateContent(req.body.description);
+    const parsedResult = JSON.parse(result.response.text());
+    console.log(parsedResult);
+    const incidentData = {
+      ID: parsedResult.ID || Math.random().toString(36).substr(2, 9),
+      Type: parsedResult.Type || "Unknown",
+      Severity: parsedResult.Severity || "Low",
+      Department: parsedResult.Department || "Train Operations",
+      Description: parsedResult.Description || "",
+      Status: "Pending",
+    };
+
+    const incident = new Incident(incidentData);
+    await incident.save();
+
+    console.log("Incident stored successfully:", incident._id);
+    return res.status(200).json({ incident });
+  } catch (error) {
+    console.error("Error generating or storing incident:", error);
+    throw error;
+  }
+}
+
+export default generateAndStoreIncident;

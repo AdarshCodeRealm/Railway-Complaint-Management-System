@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { getAllIncidents } from "../controllers/getIncident.js";
 import {
   changeAvatar,
   changeCoverImage,
@@ -12,9 +13,8 @@ import {
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewars/multer.middleware.js";
 import { verifyJWT } from "../middlewars/auth.middleware.js";
-import { audiototext } from "../controllers/model.controller.js";
-// import { imagetotext } from "../utils/model/image.js";
-import { grievanceRegister, testingControl } from "../controllers/register.controller.js";
+import   generateAndStore from "../controllers/model.controller.js";
+import { grievanceRegister, testingControl,sendMail } from "../controllers/register.controller.js";
 import { processGrievances } from "../controllers/processGrievances/process.controller.js";
 const router = Router();
 
@@ -43,8 +43,19 @@ router
 router.route("/update-password").post(verifyJWT, changePassword);
 router.route("/forget-password").post(forgetPasword);
 router.route("/sended/:email").post(verifyOTP);
-router.route("/audio").post(upload.single("location"), audiototext);
+// router.route("/audio").post(upload.single("location"), audiototext);
+
+
 router.route("/grievanceRegister").post(upload.single("attachment"), grievanceRegister);
+router.route("/sendMail").post(sendMail);
+router.route("/generateAndStoreIncident").post(generateAndStore);
+router.route("/getAllIncidents").get(getAllIncidents);
+
+
+import { deleteEmployee, addEmployee, getEmployees } from "../controllers/employee.controller.js";
 router.route("/test").get(testingControl);
 router.route("/p").get(processGrievances);
+router.route("/addNewStaff").post(addEmployee);
+router.route("/getEmployees").get(getEmployees);
+router.route("/delete/:id").post(deleteEmployee);
 export default router;

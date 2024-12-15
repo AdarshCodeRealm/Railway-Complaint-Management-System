@@ -81,15 +81,15 @@ const grievanceRegister = async (req, res) => {
       newGrievance.attachment = attachmentUrl.url;
     }
     const savedGrievance = await newGrievance.save();
-    const nodeMailerInfo = await sendMail(savedGrievance._id);
+    // const nodeMailerInfo = await sendMail(savedGrievance._id);
     return res.status(201).json({
       message: "Grievance saved successfully!",
       data: savedGrievance,
       hasAttachment: !!attachmentUrl,
-      nodeMailerInfo: {
-        envelop: nodeMailerInfo.envelope,
-        id: nodeMailerInfo.messageId,
-      },
+      // nodeMailerInfo: {
+      //   envelop: nodeMailerInfo.envelope,
+      //   id: nodeMailerInfo.messageId,
+      // },
     });
   } catch (err) {
     return res

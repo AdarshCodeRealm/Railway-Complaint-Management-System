@@ -8,145 +8,27 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-
+import axios from "axios"
 import { AlertTriangle, Clock, CheckCircle } from "lucide-react"
-import { useState } from "react"
+import { useState , useEffect} from "react"
 function GrievanceSection() {
+  const [incidents, setIncidents] = useState([]);
+
+  useEffect(() => {
+    const fetchIncidents = async () => {
+      const response = await axios.get('http://localhost:8000/api/v1/users/getAllIncidents'); // Replace with your actual API endpoint
+      console.log(response.data.allIncidents)
+      setIncidents(response.data.allIncidents);
+    
+    };
+
+    fetchIncidents();
+  }, []);
+  
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("All")
   const [severityFilter, setSeverityFilter] = useState("All")
-  const mockComplaints = [
-    {
-      id: 1,
-      type: "Housekeeping",
-      status: "Open",
-      date: "2024-09-24",
-      description:
-        "A common grievance regarding Indian train toilets is the lack of cleanliness and proper hygiene maintenance. Passengers often encounter dirty floors, unclean toilets, unpleasant odors, and inadequate cleaning during long journeys.",
-      severity: "Medium",
-      assignedStaff: null,
-    },
-    {
-      id: 2,
-      type: "Cleanliness",
-      status: "Closed",
-      date: "2024-09-24",
-      description: "Unclean compartment",
-      severity: "Low",
-      assignedStaff: "John Doe",
-    }
-    ,
-    {
-      id: 3,
-      type: "Staff Behavior",
-      status: "In Progress",
-      date: "2024-09-23",
-      description: "Rude staff member",
-      severity: "High",
-      assignedStaff: "Jane Smith",
-    }
-    ,
-    {
-      id: 12,
-      type: "Staff Behavior",
-      status: "In Progress",
-      date: "2024-09-23",
-      description: "Rude staff member",
-      severity: "High",
-      assignedStaff: "Jane Smith",
-    }
-    ,
-    {
-      id: 23,
-      type: "Staff Behavior",
-      status: "In Progress",
-      date: "2024-09-23",
-      description: "Rude staff member",
-      severity: "High",
-      assignedStaff: "Jane Smith",
-    }
-    ,
-    {
-      id: 43,
-      type: "Staff Behavior",
-      status: "In Progress",
-      date: "2024-09-23",
-      description: "Rude staff member",
-      severity: "High",
-      assignedStaff: "Jane Smith",
-    }
-    ,
-    {
-      id: 4,
-      type: "Reservation",
-      status: "Open",
-      date: "2024-09-22",
-      description: "Incorrect seat allocation",
-      severity: "Medium",
-      assignedStaff: null,
-    },
-    {
-      id: 5,
-      type: "Food Quality",
-      status: "Closed",
-      date: "2024-09-21",
-      description: "Poor quality of food served",
-      severity: "Low",
-      assignedStaff: "Mike Johnson",
-    },
-    {
-      id: 6,
-      type: "Delay",
-      status: "Open",
-      date: "2024-09-25",
-      description: "Train delayed by 2 hours",
-      severity: "Medium",
-      assignedStaff: null,
-    },
-    {
-      id: 7,
-      type: "Delay",
-      status: "Open",
-      date: "2024-09-25",
-      description: "Train delayed by 2 hours",
-      severity: "Medium",
-      assignedStaff: null,
-    },
-    {
-      id: 8,
-      type: "Delay",
-      status: "Open",
-      date: "2024-09-25",
-      description: "Train delayed by 2 hours",
-      severity: "Medium",
-      assignedStaff: null,
-    },
-    {
-      id: 9,
-      type: "Delay",
-      status: "Open",
-      date: "2024-09-25",
-      description: "Train delayed by 2 hours",
-      severity: "Medium",
-      assignedStaff: null,
-    },
-    {
-      id: 10,
-      type: "Dec iejdjlay",
-      status: "Open",
-      date: "2024-09-25",
-      description: "Train delayed by 2gr hours",
-      severity: "Medium",
-      assignedStaff: null,
-    },
-  ]
 
-  const filteredComplaints = mockComplaints.filter(
-    (complaint) =>
-      complaint.description.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (statusFilter === "All" || complaint.status === statusFilter) &&
-      (severityFilter === "All" || complaint.severity === severityFilter)
-  )
 
   const getSeverityColor = (severity) => {
     switch (severity) {
@@ -180,12 +62,12 @@ function GrievanceSection() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-gray-700">
-                Open Complaints
+                Open Complaints 
               </h2>
               <AlertTriangle className="h-8 w-8 text-blue-500" />
             </div>
             <p className="text-3xl font-bold text-gray-900 mt-2">
-              {mockComplaints.filter((c) => c.status === "Open").length}
+              {incidents.filter((c) => c.status === "Open").length}
             </p>
             <p className="text-sm text-gray-500">+2% from last month</p>
           </div>
@@ -197,7 +79,7 @@ function GrievanceSection() {
               <Clock className="h-8 w-8 text-yellow-500" />
             </div>
             <p className="text-3xl font-bold text-gray-900 mt-2">
-              {mockComplaints.filter((c) => c.status === "In Progress").length}
+              {incidents.filter((c) => c.status === "In Progress").length}
             </p>
             <p className="text-sm text-gray-500">-5% from last month</p>
           </div>
@@ -209,7 +91,7 @@ function GrievanceSection() {
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
             <p className="text-3xl font-bold text-gray-900 mt-2">
-              {mockComplaints.filter((c) => c.status === "Closed").length}
+              {incidents.filter((c) => c.status === "Closed").length}
             </p>
             <p className="text-sm text-gray-500">+10% from last month</p>
           </div>
@@ -253,8 +135,8 @@ function GrievanceSection() {
 
           <p className="text-sm text-gray-500">
             Showing{" "}
-            {filteredComplaints.filter((c) => c.status === "Open").length} of{" "}
-            {mockComplaints.length} complaints are open
+            {incidents.filter((c) => c.status === "Open").length} of
+            {incidents.length} complaints are open
           </p>
           {/* //section 3  */}
           <div>
@@ -271,24 +153,24 @@ function GrievanceSection() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredComplaints.map((complaint) => (
-                  <TableRow key={complaint.id}>
-                    <TableCell>{complaint.id}</TableCell>
-                    <TableCell>{complaint.type}</TableCell>
+                {incidents.map((incidents) => (
+                  <TableRow key={incidents._id}>
+                    <TableCell>{incidents.ID}</TableCell>
+                    <TableCell>{incidents.Type}</TableCell>
                     <TableCell>
-                      <Badge className={getStatusColor(complaint.status)}>
-                        {complaint.status}
+                      <Badge className={getStatusColor(incidents.Status)}>
+                        {incidents.Status}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getSeverityColor(complaint.severity)}>
-                        {complaint.severity}
+                      <Badge className={getSeverityColor(incidents.Severity)}>
+                        {incidents.Severity}
                       </Badge>
                     </TableCell>
-                    <TableCell>{complaint.date}</TableCell>
-                    <TableCell>{complaint.description}</TableCell>
+                    <TableCell>{incidents.DateTime}</TableCell>
+                    <TableCell>{incidents.Description}</TableCell>
                     <TableCell>
-                      {complaint.assignedStaff || "Unassigned"}
+                      {incidents.AssignedStaff || "Unassigned"}
                     </TableCell>
                   </TableRow>
                 ))}
