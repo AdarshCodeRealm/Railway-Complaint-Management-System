@@ -1,5 +1,5 @@
-import { Grievance } from "../../models/grievance.model.js";
-import { Complaint } from "../../models/complaint.model.js";
+import { Grievance } from "../models/grievance.model.js";
+import { Complaint } from "../models/complaint.model.js";
 
 async function processGrievances(req, res) {
   try {
