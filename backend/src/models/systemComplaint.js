@@ -22,12 +22,12 @@ const incidentSchema = new mongoose.Schema({
         required: true
     },
     DateTime: {
-        type: Date,
+        type: Date, 
         default: Date.now
     },
     Status: {
         type: String,
-        required: true,
+        required: true, 
         enum: ['Pending', 'Open', 'Closed']
     },
     ForwardedToHelpDesk: {

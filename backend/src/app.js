@@ -15,8 +15,10 @@ app.use(cookieParser())
 
 import userRouter from "./routes/user.routes.js"
 import twilioRouter from "./routes/twilio.routes.js"
+import adminRouter from "./routes/admin.routes.js"
 app.use("/api/v1/users",userRouter)
 app.use("/api/v1/twilio",twilioRouter)
+app.use("/api/v1/admin",adminRouter)
 
 
 export {app}

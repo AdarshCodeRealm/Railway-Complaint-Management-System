@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { getAllIncidents } from "../controllers/fetchIncidents.controller.js";
+import { getAllIncidents } from "../controllers/fetchData.controller.js";
 import { upload } from "../middlewars/multer.middleware.js";
 
-import   generateAndStore from "../controllers/model.controller.js";
+import   {generateAndStoreIncident} from "../controllers/model.controller.js";
 import { grievanceRegister, testingControl,sendMail } from "../controllers/registerGrievance.controller.js";
 import { processGrievances } from "../controllers/processAndForwardToAdmin.controller.js";
 const router = Router();
@@ -12,7 +12,7 @@ const router = Router();
 
 router.route("/grievanceRegister").post(upload.single("attachment"), grievanceRegister);
 router.route("/sendMail").post(sendMail);
-router.route("/generateAndStoreIncident").post(generateAndStore);
+router.route("/generateAndStoreIncidentIncident").post(generateAndStoreIncident);
 router.route("/getAllIncidents").get(getAllIncidents);
 
 

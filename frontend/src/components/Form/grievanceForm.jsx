@@ -36,6 +36,7 @@ export default function GrievanceForm() {
     const formData = new FormData()
     formData.append("mobileNo", mobileNo)
 
+
     // Journey Details
     const journeyDetails = {
       pnrNo: pnrNo,

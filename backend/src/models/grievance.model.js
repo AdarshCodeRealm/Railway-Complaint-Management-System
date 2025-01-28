@@ -43,10 +43,9 @@ const grievanceSchema = new Schema(
     attachment: {
       type: String,
     },
-    status: {
-      type: String,
-      enum: ['pending', 'resolved'],
-      default: 'pending',
+    openGrievance: {
+      type: Boolean,
+      default: true,
     },
   },
   {

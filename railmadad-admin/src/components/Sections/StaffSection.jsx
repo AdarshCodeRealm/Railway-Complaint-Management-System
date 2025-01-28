@@ -177,6 +177,7 @@ function EmployeeManagement() {
             <TableHead>Contact</TableHead>
             <TableHead>Department</TableHead>
             <TableHead>Post</TableHead>
+            <TableHead>Work At</TableHead>
             <TableHead>Requests</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Actions</TableHead>
@@ -212,6 +213,9 @@ function EmployeeManagement() {
 
               <TableCell>
                 <div>{employee.role}</div>
+              </TableCell>
+              <TableCell>
+                <div>{employee.location}</div>
               </TableCell>
               <TableCell>
                 {employee.request > 0 ? (

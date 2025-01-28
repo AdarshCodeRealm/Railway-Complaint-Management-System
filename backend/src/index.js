@@ -1,10 +1,17 @@
 import dotenv from "dotenv"
 import connectDB from "./db/index.js"
 import { app } from "./app.js"
+import { checkOpenGrievances } from "./controllers/processAndForwardToAdmin.controller.js"
 
 dotenv.config({
     path: './.env'
 })
+
+const intervalId = setInterval(() => {
+    checkOpenGrievances();
+    console.log('...');
+  }, 120000); 
+  
 
 connectDB()
 .then(()=>{

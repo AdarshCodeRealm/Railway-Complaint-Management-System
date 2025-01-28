@@ -52,4 +52,38 @@ async function addDummyComplaints() {
   }
 }
 
-export { processGrievances };
+import { fetchGeminiResponse } from "./model.controller.js";
+import { fetchPNR } from "../utils/fetchPNR.js";
+import { processGrievance } from "../models/processedGrievance.model.js";
+import { fetchStaffDetails } from "./fetchData.controller.js";
+import { employee } from "../models/employee.model.js";
+async function checkOpenGrievances() {
+  try {
+    let openGrievancearr = (await Grievance.find()).filter(
+      (grievance) => grievance.openGrievance === true
+    );
+    const fetchWorker = await employee.find();
+    for (let i = 0; i < openGrievancearr.length; i++) {
+      const grievance = openGrievancearr[i];
+      const geminiResponse = await fetchGeminiResponse(
+        grievance.grievanceDescription,
+        grievance.attachment
+      );
+      const trainDetails = await fetchPNR("9531575878");
+      
+     
+      await processGrievance.create({
+        grievance,
+        geminiResponse,
+        trainDetails,
+        assignedStaff: fetchWorker[Math.floor(Math.random() * 11)],
+      });
+      await grievance.updateOne({ openGrievance: false });
+      console.log("grievance ID : " + grievance._id + " processed");
+    }
+  } catch (error) {
+    console.error("Error checking open grievances:", error);
+  }
+}
+
+export { processGrievances, checkOpenGrievances };

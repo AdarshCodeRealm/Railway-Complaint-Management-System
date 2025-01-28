@@ -10,26 +10,28 @@ import {
 import { Badge } from "@/components/ui/badge"
 import axios from "axios"
 import { AlertTriangle, Clock, CheckCircle } from "lucide-react"
-import { useState , useEffect} from "react"
+import { GrievanceDetailsSheet } from "./GrievanceDetailPopup"
+import { useState, useEffect } from "react"
 function GrievanceSection() {
-  const [incidents, setIncidents] = useState([]);
+  const [incidents, setIncidents] = useState([])
 
   useEffect(() => {
     const fetchIncidents = async () => {
-      const response = await axios.get('http://localhost:8000/api/v1/users/getAllIncidents'); // Replace with your actual API endpoint
-      console.log(response.data.allIncidents)
-      setIncidents(response.data.allIncidents);
-    
-    };
+      const response = await axios.get(
+        "http://localhost:8000/api/v1/users/fetchForwadedGrievances"
+      ) // Replace with your actual API endpoint
+      console.log(response.data)
+      console.log(response.data[0].grievance)
 
-    fetchIncidents();
-  }, []);
-  
+      setIncidents(response.data)
+    }
+
+    fetchIncidents()
+  }, [])
+
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("All")
   const [severityFilter, setSeverityFilter] = useState("All")
-
-
   const getSeverityColor = (severity) => {
     switch (severity) {
       case "Low":
@@ -42,6 +44,10 @@ function GrievanceSection() {
         return "bg-gray-100 text-gray-800"
     }
   }
+
+  const [selectedGrievance, setSelectedGrievance] = useState(null)
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -62,7 +68,7 @@ function GrievanceSection() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-gray-700">
-                Open Complaints 
+                Open Complaints
               </h2>
               <AlertTriangle className="h-8 w-8 text-blue-500" />
             </div>
@@ -134,8 +140,7 @@ function GrievanceSection() {
           </div>
 
           <p className="text-sm text-gray-500">
-            Showing{" "}
-            {incidents.filter((c) => c.status === "Open").length} of
+            Showing {incidents.filter((c) => c.status === "Open").length} of
             {incidents.length} complaints are open
           </p>
           {/* //section 3  */}
@@ -149,26 +154,45 @@ function GrievanceSection() {
                   <TableHead>Severity</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Description</TableHead>
+                  <TableHead>Live Status</TableHead>
                   <TableHead>Assigned Staff</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {incidents.map((incidents) => (
-                  <TableRow key={incidents._id}>
-                    <TableCell>{incidents.ID}</TableCell>
-                    <TableCell>{incidents.Type}</TableCell>
+                  <TableRow
+                    key={incidents._id}
+                    onClick={()=>{setSelectedGrievance(incidents); setIsSheetOpen(true);}}
+                  >
+                    <TableCell>{incidents.geminiRes.ID}</TableCell>
+                    <TableCell>{incidents.geminiRes.Type}</TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(incidents.Status)}>
-                        {incidents.Status}
+                        {incidents.geminiRes.Status}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getSeverityColor(incidents.Severity)}>
-                        {incidents.Severity}
+                      <Badge
+                        className={getSeverityColor(
+                          incidents.geminiRes.Severity
+                        )}
+                      >
+                        {incidents.geminiRes.Severity}
                       </Badge>
                     </TableCell>
-                    <TableCell>{incidents.DateTime}</TableCell>
-                    <TableCell>{incidents.Description}</TableCell>
+                    <TableCell>
+                      {new Date(incidents.grievance.registerAt).toDateString()}
+                      <br />
+                      {new Date(
+                        incidents.grievance.registerAt
+                      ).toLocaleTimeString()}
+                    </TableCell>
+                    <TableCell>{incidents.geminiRes.Description}</TableCell>
+                    <TableCell className="flex flex-row items-center gap-3">
+                      {" "}
+                      <div className=" bg-red-500 h-2 w-2 mt-1 rounded-full animate-ping  " />
+                      Mumbai
+                    </TableCell>
                     <TableCell>
                       {incidents.AssignedStaff || "Unassigned"}
                     </TableCell>
@@ -177,6 +201,11 @@ function GrievanceSection() {
               </TableBody>
             </Table>
           </div>
+          <GrievanceDetailsSheet
+            isOpen={isSheetOpen}
+            onClose={() => setIsSheetOpen(false)}
+            grievance={selectedGrievance}
+          />
         </div>
       </div>
     </main>

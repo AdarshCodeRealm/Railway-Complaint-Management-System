@@ -76,6 +76,7 @@ const grievanceRegister = async (req, res) => {
       mobileNo: req.body.mobileNo,
       journeyDetails: req.body.journeyDetails,
       grievanceDescription: req.body.grievanceDescription,
+      openGrievance:true
     });
     if (attachmentUrl != null) {
       newGrievance.attachment = attachmentUrl.url;

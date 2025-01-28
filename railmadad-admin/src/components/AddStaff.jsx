@@ -22,11 +22,13 @@ import { Label } from "@/components/ui/label"
 import axios from "axios"
 function AddEmployeeDialog() {
   const [open, setOpen] = useState(false)
+  const [id,setId]=useState("")
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [department, setDepartment] = useState("")
   const [role, setRole] = useState("")
+  const [location , setLocation] = useState("")
   const [shift, setShift] = useState("")
   async function addNewStaff(e) {
     e.preventDefault()
@@ -40,6 +42,7 @@ function AddEmployeeDialog() {
         department,
         shiftTiming: shift,
         role,
+        location
       }
       const response = await axios.post(
         "http://localhost:8000/api/v1/users/addNewStaff",
@@ -71,6 +74,19 @@ function AddEmployeeDialog() {
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">
+              ID
+            </Label>
+            <Input
+              id="id"
+              type="text"
+              onChange={(e) => setId(e.target.value)}
+              value={id}
+              placeholder="Enter id"
+              className="col-span-3"
+            />
+          </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
               Name
@@ -123,8 +139,8 @@ function AddEmployeeDialog() {
                   Railway Departments
                 </SelectItem>
                 <SelectItem value="Railway Staff">Railway Staff</SelectItem>
-                <SelectItem value="software">Software</SelectItem>
-                <SelectItem value="marketing">Marketing</SelectItem>
+                <SelectItem value="Software">Software</SelectItem>
+                <SelectItem value="Marketing">Marketing</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -161,6 +177,19 @@ function AddEmployeeDialog() {
                 </SelectItem>
               </SelectContent>
             </Select>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">
+              Location
+            </Label>
+            <Input
+              id="Location"
+              type="text"
+              onChange={(e) => setLocation(e.target.value)}
+              value={location}
+              placeholder="Station Name"
+              className="col-span-3"
+            />
           </div>
           {/* <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="status" className="text-right">
